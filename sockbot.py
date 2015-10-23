@@ -57,12 +57,17 @@ def main():
             if word in comment.body:
                 # if sock is not in the database, put it in and contact the user
                 instances += 1
+
                 if not comment.id in get_old_socks(dbcur, table):
                     # add the comment to the database
                     print('[+] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
+
                     dbcur.execute('INSERT INTO {} VALUES (NULL, ?, CURRENT_TIMESTAMP)'.format(table), (comment.id,))
                     dbcon.commit()
-                    # add send a message function here
+                    # send message
+                    pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
+                    message_string = 'Sock #{} was spotted at: {}. If I broke somehow, contact /u/Always_SFW!'.format(pk_id, comment.submission.url)
+                    r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
                     pause(2)
         cycle += 1
         print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), instances))
