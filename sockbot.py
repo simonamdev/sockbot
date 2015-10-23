@@ -4,17 +4,21 @@ import sqlite3
 
 from time import sleep
 
-version = '0.1'
+"""
+Sockbot was created using assets and imagery from Elite Dangerous, with the permission of Frontier Developments plc,
+for non-commercial purposes. It is not endorsed by nor reflects the views or opinions of Frontier Developments and
+no employee of Frontier Developments was involved in the making of it.
+"""
+
+version = '0.2'
 user_agent = 'windows:sockbot:v{} (by /u/Always_SFW)'.format(version)
-testing_mode = True  # switch to test DB
+testing_mode = False  # switch to test DB and criteria
 verbose_mode = False
-word = 'sock'
+words = ['sock', 'SOCK']
 table = 'socks'
 user = 'tfaddy'
-if testing_mode:
-    table = 'test'
-    word = 'CMDR'
-    user = 'Always_SFW'
+send_delay = 5
+cycle_delay = 10
 
 def pause(time=5):
     time_left = time
@@ -45,8 +49,8 @@ def main():
             print('[-] ', Exception)
             exit(0)
         all_comments = r.get_comments('elitedangerous') # add other elite dangerous subreddits here
-        print('[+] Sockbot is looking through the comments for: ', word)
-        instances = 0
+        print('[+] Sockbot is looking through the comments for: ', words)
+        instances = 0  # of the word present in the comments. Also includes those already in DB
         for comment in all_comments:
             if verbose_mode:
                 try:
@@ -54,24 +58,23 @@ def main():
                 except Exception:
                     print('[-] Could not print comment!')
                     print(Exception)
-            if word in comment.body:
-                # if sock is not in the database, put it in and contact the user
-                instances += 1
-
-                if not comment.id in get_old_socks(dbcur, table):
-                    # add the comment to the database
-                    print('[+] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
-
-                    dbcur.execute('INSERT INTO {} VALUES (NULL, ?, CURRENT_TIMESTAMP)'.format(table), (comment.id,))
-                    dbcon.commit()
-                    # send message
-                    pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
-                    message_string = 'Sock #{} was spotted at: {}. If I broke somehow, contact /u/Always_SFW!'.format(pk_id, comment.submission.url)
-                    r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
-                    pause(2)
+            for word in words:
+                if word in comment.body:
+                    # if sock is not in the database, put it in and contact the user
+                    instances += 1
+                    if not comment.id in get_old_socks(dbcur, table):
+                        # add the comment to the database, then send the message
+                        print('[+] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
+                        dbcur.execute('INSERT INTO {} VALUES (NULL, ?, CURRENT_TIMESTAMP)'.format(table), (comment.id,))
+                        dbcon.commit()
+                        pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
+                        message_string = 'Sock #{} was spotted at: {}. If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me!'.format(pk_id, comment.permalink)
+                        print('Sending string: {}'.format(message_string))
+                        r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
+                        pause(send_delay)
         cycle += 1
         print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), instances))
-        pause(5)
+        pause(cycle_delay)
 
 if __name__ == '__main__':
     main()
