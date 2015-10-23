@@ -10,11 +10,12 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-version = '0.2'
+version = '0.2.1'
 user_agent = 'windows:sockbot:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
 verbose_mode = False
 words = ['sock', 'SOCK']
+avoid_words = ['socket', 'SOCKET']
 table = 'socks'
 user = 'tfaddy'
 send_delay = 5
@@ -59,17 +60,18 @@ def main():
                     print('[-] Could not print comment!')
                     print(Exception)
             for word in words:
-                if word in comment.body:
+                if word in comment.body and not word in avoid_words:  # need to make a list of actual non sock references
                     # if sock is not in the database, put it in and contact the user
                     instances += 1
                     if not comment.id in get_old_socks(dbcur, table):
                         # add the comment to the database, then send the message
-                        print('[+] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
+                        print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
                         dbcur.execute('INSERT INTO {} VALUES (NULL, ?, CURRENT_TIMESTAMP)'.format(table), (comment.id,))
                         dbcon.commit()
                         pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
                         message_string = 'Sock #{} was spotted at: {}. If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me!'.format(pk_id, comment.permalink)
-                        print('Sending string: {}'.format(message_string))
+                        print('[!] Sending string:')
+                        print('\t', message_string)
                         r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
                         pause(send_delay)
         cycle += 1
