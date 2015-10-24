@@ -13,7 +13,6 @@ no employee of Frontier Developments was involved in the making of it.
 version = '0.3'
 user_agent = 'windows:sockbot:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
-verbose_mode = False
 words = ['sock', 'SOCK']
 avoid_words = ['socket', 'SOCKET']
 table = 'socks'
@@ -45,11 +44,6 @@ def main():
     while True:
         print('[+] Sockbot cycle: ', cycle)
         try:
-            subreddit = r.get_subreddit('elitedangerous')
-        except Exception:
-            print('[-] ', Exception)
-            exit(0)
-        try:
             all_comments = r.get_comments('elitedangerous') # add other elite dangerous subreddits here
         except Exception:
             print('[-] ', Exception)
@@ -57,12 +51,6 @@ def main():
             print('[+] Sockbot is looking through the comments for: ', words)
             instances = 0  # of the word present in the comments. Also includes those already in DB
             for comment in all_comments:
-                if verbose_mode:
-                    try:
-                        print(comment.body)
-                    except Exception:
-                        print('[-] Could not print comment!')
-                        print(Exception)
                 for word in words:
                     if word in comment.body and not word in avoid_words and not 'I am a bot!' in comment.body:  # need to make a list of actual non sock references
                         # if sock is not in the database, put it in and contact the user
