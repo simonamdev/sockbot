@@ -33,6 +33,14 @@ def get_old_socks(cursor, table_name=table):
         old_socks.add(row[1])  # id, comment id, timestamp
     return old_socks
 
+def insert_comment_in_db(connection, cursor, table_name, id):
+    try:
+        cursor.execute('INSERT INTO {} VALUES (NULL, ?, CURRENT_TIMESTAMP)'.format(table_name), (id,))
+        connection.commit()
+    except:
+        print('[-] Sockbot did not manage to insert the ID into the DB')
+        print('[-] Exception: ', Exception)
+
 def main():
     cycle = 1
     dbcon = sqlite3.connect('socks.db')
@@ -59,8 +67,7 @@ def main():
                             if comment.id not in get_old_socks(dbcur, table):
                                 # add the comment to the database, then send the message
                                 print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
-                                dbcur.execute('INSERT INTO {} VALUES (NULL, ?, CURRENT_TIMESTAMP)'.format(table), (comment.id,))
-                                dbcon.commit()
+                                insert_comment_in_db(dbcon, dbcur, table, comment.id)
                                 pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
                                 message_string = 'Sock #{} was spotted at: {}.  If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me!'.format(pk_id, comment.permalink)
                                 print('[!] Sending string:')
