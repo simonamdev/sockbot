@@ -77,7 +77,7 @@ def main():
                             print('[!] Sending string:')
                             print('\t', message_string)
                             r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
-                            reply_string = 'I see you mentioned socks in some way. I have notified /u/tfaddy. I am a bot! You can find my source code here: https://github.com/Winter259/sockbot'
+                            reply_string = 'I see you mentioned socks in some way. I have notified tfaddy. I am a bot! You can find my source code here: https://github.com/Winter259/sockbot'
                             print('[!] Replying with:')
                             print('\t', reply_string)
                             comment.reply(reply_string)
