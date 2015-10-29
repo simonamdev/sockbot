@@ -13,19 +13,25 @@ no employee of Frontier Developments was involved in the making of it.
 version = '0.4'
 user_agent = 'windows:sockbot:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
-words = ['sock', 'SOCK']
+words = ['sock', 'SOCK', 'Sock']
 avoid_words = ['socket', 'SOCKET']
 table = 'socks'
 user = 'tfaddy'
 send_delay = 5
 cycle_delay = 10
 
+def print_list(prompt='', list=[]):
+    print(prompt)
+    for element in list:
+        print('\t', element)
+
 def pause(time=5):
     time_left = time
     while time_left >= 0:
-        print('[+] Sockbot will continue in: {}                               '.format(time_left), end='\r')
+        print('[+] Sockbot will continue in: {}    '.format(time_left), end='\r')
         time_left -= 1
         sleep(1)
+    print('                                                      ')  # clear line completely
 
 def get_old_socks(cursor, table_name=table):
     old_socks = set()
@@ -58,17 +64,27 @@ def main():
         else:
             print('[+] Sockbot is looking through the comments for: ', words)
             instances = 0  # of the word present in the comments. Also includes those already in DB
+            socks_found = []  # will contain lists of sock dicts
             try:
                 for comment in all_comments:
                     for word in words:
                         if word in comment.body and word not in avoid_words and 'I am a bot!' not in comment.body:  # need to make a list of actual non sock references
-                            # if sock is not in the database, put it in and contact the user
                             instances += 1
-                            if comment.id not in get_old_socks(dbcur, table):
-                                # add the comment to the database, then send the message
-                                print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
+                            if comment.id not in get_old_socks(dbcur, table): # if sock is not in the database, put it in
+                                print('[!] Sockbot found a sock!')
                                 insert_comment_in_db(dbcon, dbcur, table, comment.id)
                                 pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
+                                # create sock dict
+                                sock = {
+                                    'number': pk_id,
+                                    'id': comment.id,
+                                    'link': comment.permalink
+                                }
+                                # append dict to list
+                                print('[+] Adding sock #{} with ID: {} and link: {} to list'.format(pk_id, comment.id, comment.permalink))
+                                socks_found.append(sock)
+                                print_list('Current cached socks:', socks_found)
+                                """
                                 message_string = 'Sock #{} was spotted at: {}.  If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me!'.format(pk_id, comment.permalink)
                                 print('[!] Sending string:')
                                 print('\t', message_string)
@@ -77,6 +93,7 @@ def main():
                                 print('[!] Replying with:')
                                 print('\t', reply_string)
                                 comment.reply(reply_string)
+                                """
                                 pause(send_delay)
             except:
                 print('[-] Encountered exception: {} when trying to search the comments'.format(Exception))
@@ -85,4 +102,5 @@ def main():
             pause(cycle_delay)
 
 if __name__ == '__main__':
+    print('[+] Sockbot version: {} starting now.'.format(version))
     main()
