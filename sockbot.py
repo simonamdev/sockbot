@@ -54,6 +54,7 @@ def main():
     o.refresh(force=True)
     while True:
         print('[+] Sockbot cycle: ', cycle)
+        cycle += 1
         for subreddit in subreddits:
             try:
                 all_comments = r.get_comments(subreddit)
@@ -91,7 +92,6 @@ def main():
                                     pause(send_delay)
                 except Exception:
                     print('[-] Encountered exception: {} when trying to search the comments'.format(Exception))
-                cycle += 1
                 print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), instances))
                 pause(cycle_delay)
 
