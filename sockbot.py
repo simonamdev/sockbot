@@ -66,7 +66,7 @@ def main():
                 try:
                     for comment in all_comments:
                         for word in words:
-                            if word in comment.body and word not in avoid_words and 'I am a bot!' not in comment.body:  # need to make a list of actual non sock references
+                            if word in comment.body and word not in avoid_words and 'tfaddy has been notified' not in comment.body:  # need to make a list of actual non sock references
                                 # if sock is not in the database, put it in and contact the user
                                 instances += 1
                                 if comment.id not in get_old_socks(dbcur, table):
@@ -80,11 +80,10 @@ def main():
                                     r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
                                     # reply_string = 'I see you mentioned socks in some way. I have notified tfaddy. I am a bot! You can find my source code here: https://github.com/Winter259/sockbot'
                                     reply_string = '<h1>SOCK DETECTED</h1><br>' \
-                                                   'tfaddy has been notified.<br>' \
-                                                   '------------------<br>' \
-                                                   '<i>I am a bot. Created and maintaned by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a><br>' \
-                                                   'You can find my source code <a href="https://github.com/Winter259/sockbot">Github</a><br>' \
-                                                   'Current Version: {}</i>'.format(version)
+                                                   'tfaddy has been notified.<br><br>' \
+                                                   '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a>.<br>' \
+                                                   'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a>.<br>' \
+                                                   'Sockbot current version: {}</i>'.format(version)
                                     post_string = html2text(reply_string)
                                     print('[!] Replying with:')
                                     print('\t', post_string)
