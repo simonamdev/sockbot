@@ -11,7 +11,7 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-version = '0.4'
+version = '0.5'
 user_agent = 'windows:sockbot:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
 words = ['sock', 'SOCK', 'Sock']
