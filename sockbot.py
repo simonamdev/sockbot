@@ -23,9 +23,10 @@ cycle_delay = 10
 def pause(time=5):
     time_left = time
     while time_left >= 0:
-        print('[+] Sockbot will continue in: {}                               '.format(time_left), end='\r')
+        print('[+] Sockbot will continue in: {}    '.format(time_left), end='\r')
         time_left -= 1
         sleep(1)
+    print('                                                       ', end='\r')  # clear the line
 
 def get_old_socks(cursor, table_name=table):
     old_socks = set()
