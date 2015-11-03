@@ -1,6 +1,7 @@
 import praw
 import OAuth2Util
 import sqlite3
+from html2text import html2text  # thank you Aaron Schwartz
 
 from time import sleep
 
@@ -13,7 +14,7 @@ no employee of Frontier Developments was involved in the making of it.
 version = '0.4'
 user_agent = 'windows:sockbot:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
-words = ['sock', 'SOCK']
+words = ['sock', 'SOCK', 'Sock']
 avoid_words = ['socket', 'SOCKET']
 table = 'socks'
 user = 'tfaddy'
@@ -74,10 +75,17 @@ def main():
                                 print('[!] Sending string:')
                                 print('\t', message_string)
                                 r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
-                                reply_string = 'I see you mentioned socks in some way. I have notified tfaddy. I am a bot! You can find my source code here: https://github.com/Winter259/sockbot'
+                                # reply_string = 'I see you mentioned socks in some way. I have notified tfaddy. I am a bot! You can find my source code here: https://github.com/Winter259/sockbot'
+                                reply_string = '<h1>SOCK DETECTED</h1><br>' \
+                                               'tfaddy has been notified.<br>' \
+                                               '------------------<br>' \
+                                               '<i>I am a bot. Created and maintaned by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a><br>' \
+                                               'You can find my source code <a href="https://github.com/Winter259/sockbot">Github</a><br>' \
+                                               'Current Version: {}</i>'.format(version)
+                                post_string = html2text(reply_string)
                                 print('[!] Replying with:')
-                                print('\t', reply_string)
-                                comment.reply(reply_string)
+                                print('\t', post_string)
+                                comment.reply(post_string)
                                 pause(send_delay)
             except:
                 print('[-] Encountered exception: {} when trying to search the comments'.format(Exception))
