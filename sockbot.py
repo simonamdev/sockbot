@@ -82,7 +82,7 @@ def main():
                                     print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
                                     insert_comment_in_db(dbcon, dbcur, table, comment.id)
                                     pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
-                                    message_string = 'Sock #{} was spotted at: {}.  If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me!'.format(pk_id, comment.permalink)
+                                    message_string = 'Sock #{} was spotted at: {}.  If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me! I have been online since: {}'.format(pk_id, comment.permalink, startup_time)
                                     print('[!] Sending string:')
                                     print('\t', message_string)
                                     r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
@@ -99,10 +99,10 @@ def main():
                                     comment.reply(post_string)
                                     pause(send_delay)
                 except Exception:
-                    print('[-] Exception occured whilst attempting to parse the comments')
+                    print('[-] Exception occurred whilst attempting to parse the comments')
                     print('[-] Exception:', Exception)
-                print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), socks_spotted))
                 pause(cycle_delay)
+        print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), socks_spotted))
 
 if __name__ == '__main__':
     main()
