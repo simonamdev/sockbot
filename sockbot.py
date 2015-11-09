@@ -19,7 +19,7 @@ avoid_words = ['socket', 'SOCKET']
 table = 'socks'
 user = 'tfaddy'
 send_delay = 5
-cycle_delay = 3
+cycle_delay = 1
 subreddits = ['elitedangerous', 'eliteracers', 'elitetraders', 'eliteminers', 'fuelrats', 'unknownartefact']
 
 def pause(time=5):
