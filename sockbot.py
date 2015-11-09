@@ -79,7 +79,6 @@ def main():
                                     print('[!] Sending string:')
                                     print('\t', message_string)
                                     r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
-                                    # reply_string = 'I see you mentioned socks in some way. I have notified tfaddy. I am a bot! You can find my source code here: https://github.com/Winter259/sockbot'
                                     reply_string = '<h1>SOCK DETECTED</h1><br><br>' \
                                                    'tfaddy has been notified.<br><br>' \
                                                    '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a>.<br>' \
