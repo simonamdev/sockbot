@@ -91,7 +91,7 @@ def main():
                                                    '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a>.<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a>.<br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
-                                                   'Online since: <b>{}</b><br>' \
+                                                   'Online since: <b>{}</b> (GMT)<br>' \
                                                    'Sockbot current version: <b>{}</b></i>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
                                     print('[!] Replying with:')
