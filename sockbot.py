@@ -3,7 +3,7 @@ import OAuth2Util
 import sqlite3
 from html2text import html2text  # thank you Aaron Schwartz
 
-from time import sleep
+from time import sleep, strftime, gmtime
 
 """
 Sockbot was created using assets and imagery from Elite Dangerous, with the permission of Frontier Developments plc,
@@ -46,6 +46,7 @@ def insert_comment_in_db(connection, cursor, table_name, id):
 
 def main():
     cycle = 1
+    startup_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     dbcon = sqlite3.connect('socks.db')
     dbcur = dbcon.cursor()
     get_old_socks(dbcur, table)
@@ -79,11 +80,13 @@ def main():
                                     print('\t', message_string)
                                     r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
                                     # reply_string = 'I see you mentioned socks in some way. I have notified tfaddy. I am a bot! You can find my source code here: https://github.com/Winter259/sockbot'
-                                    reply_string = '<h1>SOCK DETECTED</h1><br>' \
+                                    reply_string = '<h1>SOCK DETECTED</h1><br><br>' \
                                                    'tfaddy has been notified.<br><br>' \
                                                    '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a>.<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a>.<br>' \
-                                                   'Sockbot current version: {}</i>'.format(version)
+                                                   'Socks detected: {}<br>' \
+                                                   'Online since: {}<br>' \
+                                                   'Sockbot current version: {}</i>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
                                     print('[!] Replying with:')
                                     print('\t', post_string)
