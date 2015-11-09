@@ -61,7 +61,7 @@ def main():
     o = OAuth2Util.OAuth2Util(r, server_mode=True)
     o.refresh(force=True)
     while True:
-        print('[+] Sockbot cycle: ', cycle)
+        print('[+] Sockbot cycle: {}. Searching for: {}'.format(cycle, words))
         cycle += 1
         socks_spotted = 0  # amount of socks currently present in the comments. Also includes those already in DB
         for subreddit in subreddits:
@@ -70,7 +70,7 @@ def main():
             except Exception:
                 print('[-] Exception occurred:', Exception)
             else:
-                print('[+] Sockbot is checking {} for {}'.format(subreddit, words))
+                print('[+] Sockbot is checking /r/{}'.format(subreddit))
                 try:
                     for comment in all_comments:
                         for word in words:
