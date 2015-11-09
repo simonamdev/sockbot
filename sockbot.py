@@ -60,10 +60,10 @@ def main():
     r = praw.Reddit(user_agent=user_agent)
     o = OAuth2Util.OAuth2Util(r, server_mode=True)
     o.refresh(force=True)
-    socks_spotted = 0  # amount of socks currently present in the comments. Also includes those already in DB
     while True:
         print('[+] Sockbot cycle: ', cycle)
         cycle += 1
+        socks_spotted = 0  # amount of socks currently present in the comments. Also includes those already in DB
         for subreddit in subreddits:
             try:
                 all_comments = r.get_comments(subreddit)
@@ -90,9 +90,9 @@ def main():
                                                    'tfaddy has been notified.<br><br>' \
                                                    '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a>.<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a>.<br>' \
-                                                   'Socks detected: {}<br>' \
-                                                   'Online since: {}<br>' \
-                                                   'Sockbot current version: {}</i>'.format(pk_id, startup_time, version)
+                                                   'Socks detected so far: <b>{}</b><br>' \
+                                                   'Online since: <b>{}</b><br>' \
+                                                   'Sockbot current version: <b>{}</b></i>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
                                     print('[!] Replying with:')
                                     print('\t', post_string)
