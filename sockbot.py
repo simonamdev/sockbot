@@ -22,11 +22,32 @@ send_delay = 5
 cycle_delay = 1
 subreddits = [
     'elitedangerous',
-    'eliteracers',
     'elitetraders',
+    'eliteexplorers',
     'eliteminers',
+    'eliteracers',
+    'elitebountyhunters',
+    'elitedangerouspics',
+    'elitestories',
+    'elitewings',
+    'elitehumor',
+    'eliteschool',
+    'elitetankers',
+    'eliteone',
+    'eliteoutfitters',
     'fuelrats',
-    'unknownartefact'
+    'unknownartefact',
+    'elitealliance',
+    'elitemahon',
+    'elitewinters',
+    'elitehudson',
+    'elitetorval',
+    'elitelavigny',
+    'elitepatreus',
+    'aislingduval',
+    'kumocrew',
+    'eliteantal',
+    'elitesirius'
 ]
 
 def pause(time=5):
