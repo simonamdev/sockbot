@@ -12,7 +12,7 @@ no employee of Frontier Developments was involved in the making of it.
 """
 
 version = '0.6'
-user_agent = 'windows:sockbot:v{} (by /u/Always_SFW)'.format(version)
+user_agent = 'windows:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
 words = ['sock', 'SOCK', 'Sock']
 avoid_words = ['socket', 'SOCKET']
@@ -20,7 +20,14 @@ table = 'socks'
 user = 'tfaddy'
 send_delay = 5
 cycle_delay = 1
-subreddits = ['elitedangerous', 'eliteracers', 'elitetraders', 'eliteminers', 'fuelrats', 'unknownartefact']
+subreddits = [
+    'elitedangerous',
+    'eliteracers',
+    'elitetraders',
+    'eliteminers',
+    'fuelrats',
+    'unknownartefact'
+]
 
 def pause(time=5):
     time_left = time
@@ -53,6 +60,7 @@ def main():
     r = praw.Reddit(user_agent=user_agent)
     o = OAuth2Util.OAuth2Util(r, server_mode=True)
     o.refresh(force=True)
+    socks_spotted = 0  # amount of socks currently present in the comments. Also includes those already in DB
     while True:
         print('[+] Sockbot cycle: ', cycle)
         cycle += 1
@@ -62,14 +70,13 @@ def main():
             except Exception:
                 print('[-] Exception occurred:', Exception)
             else:
-                print('[+] Sockbot is looking through the comments for: {} within subreddit: {}'.format(words, subreddit))
-                instances = 0  # of the word present in the comments. Also includes those already in DB
+                print('[+] Sockbot is checking {} for {}'.format(subreddit, words))
                 try:
                     for comment in all_comments:
                         for word in words:
                             if word in comment.body and word not in avoid_words and 'tfaddy has been notified' not in comment.body:  # need to make a list of actual non sock references
                                 # if sock is not in the database, put it in and contact the user
-                                instances += 1
+                                socks_spotted += 1
                                 if comment.id not in get_old_socks(dbcur, table):
                                     # add the comment to the database, then send the message
                                     print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
@@ -92,8 +99,9 @@ def main():
                                     comment.reply(post_string)
                                     pause(send_delay)
                 except Exception:
-                    print('[-] Encountered exception: {} when trying to search the comments'.format(Exception))
-                print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), instances))
+                    print('[-] Exception occured whilst attempting to parse the comments')
+                    print('[-] Exception:', Exception)
+                print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), socks_spotted))
                 pause(cycle_delay)
 
 if __name__ == '__main__':
