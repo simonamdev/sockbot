@@ -1,8 +1,8 @@
 import praw
 import OAuth2Util
-import sqlite3
+import pysqlite
 from html2text import html2text  # thank you Aaron Schwartz
-
+from purrtools import pause
 from time import sleep, strftime, gmtime
 
 """
@@ -11,7 +11,7 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-version = '0.6'
+version = '0.7'
 user_agent = 'windows:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
 words = ['sock', 'SOCK', 'Sock']
@@ -50,34 +50,19 @@ subreddits = [
     'elitesirius'
 ]
 
-def pause(time=5):
-    time_left = time
-    while time_left >= 0:
-        print('[+] Sockbot will continue in: {}    '.format(time_left), end='\r')
-        time_left -= 1
-        sleep(1)
-    print('                                                       ', end='\r')  # clear the line
 
-def get_old_socks(cursor, table_name=table):
-    old_socks = set()
-    for row in cursor.execute('SELECT * FROM {} ORDER BY id'.format(table_name)):
-        old_socks.add(row[1])  # id, comment id, timestamp
-    return old_socks
+def get_comment_id_list(db, table_name):
+    comment_id_list = []
+    data = db.get_db_data(table_name)
+    for row in data:
+        comment_id_list.append(row[1])
+    return comment_id_list
 
-def insert_comment_in_db(connection, cursor, table_name, id):
-    try:
-        cursor.execute('INSERT INTO {} VALUES (NULL, ?, CURRENT_TIMESTAMP)'.format(table_name), (id,))
-        connection.commit()
-    except:
-        print('[-] Sockbot did not manage to insert the ID into the DB')
-        print('[-] Exception: ', Exception)
 
 def main():
     cycle = 1
     startup_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    dbcon = sqlite3.connect('socks.db')
-    dbcur = dbcon.cursor()
-    get_old_socks(dbcur, table)
+    database = pysqlite.Pysqlite('socksdb', 'socks.db')
     r = praw.Reddit(user_agent=user_agent)
     o = OAuth2Util.OAuth2Util(r, server_mode=True)
     o.refresh(force=True)
@@ -88,8 +73,8 @@ def main():
         for subreddit in subreddits:
             try:
                 all_comments = r.get_comments(subreddit)
-            except Exception:
-                print('[-] Exception occurred:', Exception)
+            except Exception as e:
+                print('[-] Exception occurred:', e)
             else:
                 print('[+] Sockbot is checking /r/{}'.format(subreddit))
                 try:
@@ -98,32 +83,33 @@ def main():
                             if word in comment.body and word not in avoid_words and 'tfaddy has been notified' not in comment.body:  # need to make a list of actual non sock references
                                 # if sock is not in the database, put it in and contact the user
                                 socks_spotted += 1
-                                if comment.id not in get_old_socks(dbcur, table):
+                                if comment.id not in get_comment_id_list(database, table):
                                     # add the comment to the database, then send the message
                                     print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
-                                    insert_comment_in_db(dbcon, dbcur, table, comment.id)
-                                    pk_id = dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
+                                    database.insert_db_data(table, '(NULL, ?, CURRENT_TIMESTAMP)', (comment.id,))
+                                    pk_id = database.dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
                                     message_string = 'Sock #{} was spotted at: {}.  If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me! I have been online since: {}'.format(pk_id, comment.permalink, startup_time)
                                     print('[!] Sending string:')
                                     print('\t', message_string)
                                     r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
                                     reply_string = '<h1>SOCK DETECTED</h1><br><br>' \
-                                                   'tfaddy has been notified.<br><br>' \
+                                                   'tfaddy has been notified.<br><hr><br>' \
                                                    '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a><br>' \
+                                                   'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist.<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
                                                    'Online since: <b>{}</b> (GMT)<br>' \
                                                    'Sockbot current version: <b>{}</b></i>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
                                     print('[!] Replying with:')
-                                    print('\t', post_string)
+                                    print(post_string)
                                     comment.reply(post_string)
-                                    pause(send_delay)
-                except Exception:
+                                    pause('Holding after sending message', send_delay)
+                except Exception as e:
                     print('[-] Exception occurred whilst attempting to parse the comments')
-                    print('[-] Exception:', Exception)
-                pause(cycle_delay)
-        print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_old_socks(dbcur, table)), socks_spotted))
+                    print('[-] Exception:', e)
+                sleep(cycle_delay)
+        print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_comment_id_list(database, table)), socks_spotted))
 
 if __name__ == '__main__':
     main()
