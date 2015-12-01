@@ -1,6 +1,6 @@
 import praw
 import OAuth2Util
-import pysqlite
+from pysqlite import Pysqlite
 from html2text import html2text  # thank you Aaron Schwartz
 from purrtools import pause
 from time import sleep, strftime, gmtime
@@ -11,7 +11,7 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-version = '0.7'
+version = '0.7.1'
 user_agent = 'windows:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
 words = ['sock', 'SOCK', 'Sock']
@@ -47,7 +47,8 @@ subreddits = [
     'aislingduval',
     'kumocrew',
     'eliteantal',
-    'elitesirius'
+    'elitesirius',
+    'elitelivery'
 ]
 
 
@@ -62,10 +63,11 @@ def get_comment_id_list(db, table_name):
 def main():
     cycle = 1
     startup_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    database = pysqlite.Pysqlite('socksdb', 'socks.db')
+    print('[!] Sockbot version {} starting at: {}'.format(version, startup_time))
+    database = Pysqlite('socksdb', 'socks.db')
     r = praw.Reddit(user_agent=user_agent)
     o = OAuth2Util.OAuth2Util(r, server_mode=True)
-    o.refresh(force=True)
+    o.refresh(force=True)  # avoids having to refresh the token manually
     while True:
         print('[+] Sockbot cycle: {}. Searching for: {}'.format(cycle, words))
         cycle += 1
@@ -88,7 +90,7 @@ def main():
                                     print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
                                     database.insert_db_data(table, '(NULL, ?, CURRENT_TIMESTAMP)', (comment.id,))
                                     pk_id = database.dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
-                                    message_string = 'Sock #{} was spotted at: {}.  If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me! I have been online since: {}'.format(pk_id, comment.permalink, startup_time)
+                                    message_string = 'Sock #{} was spotted at: {}. If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me! I have been online since: {}'.format(pk_id, comment.permalink, startup_time)
                                     print('[!] Sending string:')
                                     print('\t', message_string)
                                     r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
@@ -99,6 +101,7 @@ def main():
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
                                                    'Online since: <b>{}</b> (GMT)<br>' \
+                                                   'SOCKBOT IS HYPED FOR HORIZONS!! ARE YOU??<br>' \
                                                    'Sockbot current version: <b>{}</b></i>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
                                     print('[!] Replying with:')
