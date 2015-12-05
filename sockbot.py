@@ -11,8 +11,8 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-version = '0.7.2'
-user_agent = 'windows:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
+version = '0.7.4'
+user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 testing_mode = False  # switch to test DB and criteria
 words_to_look_for = ['sock', 'SOCK', 'Sock']
 words_to_avoid = ['socket', 'SOCKET', 'Socket']
@@ -48,7 +48,8 @@ subreddits = [
     'kumocrew',
     'eliteantal',
     'elitesirius',
-    'elitelivery'
+    'elitelivery',
+    'EiteDagerous'
 ]
 
 
@@ -100,9 +101,9 @@ def main():
                                         database.insert_db_data(table, '(NULL, ?, CURRENT_TIMESTAMP)', (comment.id,))
                                         pk_id = database.dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
                                         message_string = 'Sock #{} was spotted at: {}. If I broke somehow, contact /u/Always_SFW! or get /u/SpyTec13 to ban me! I have been online since: {}'.format(pk_id, comment.permalink, startup_time)
-                                        print('[!] Sending string:')
-                                        print('\t', message_string)
-                                        r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
+                                        if not subreddit == 'EiteDagerous':
+                                            print('[!] Sending string: {}'.format(message_string))
+                                            r.send_message(user, 'Sock #{} spotted!'.format(pk_id), message_string)
                                         reply_string = '<h1>SOCK DETECTED</h1><br><br>' \
                                                        'tfaddy has been notified.<br><hr><br>' \
                                                        '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a><br>' \
@@ -113,8 +114,9 @@ def main():
                                                        'SOCKBOT IS HYPED FOR HORIZONS!! ARE YOU??<br>' \
                                                        'Sockbot current version: <b>{}</b></i>'.format(pk_id, startup_time, version)
                                         post_string = html2text(reply_string)
-                                        print('[!] Replying with:')
-                                        print(post_string)
+                                        if subreddit == 'EiteDagerous':
+                                            post_string = 'ಠ_ಠ'
+                                        print('[!] Replying with: {}'.format(post_string))
                                         comment.reply(post_string)
                                         pause('Holding after sending message', send_delay)
                 except Exception as e:
