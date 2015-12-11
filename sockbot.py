@@ -11,13 +11,13 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-testing_mode = True
+testing_mode = False
 
-version = '0.8'
+version = '0.8.1'
 user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 table = 'socks'
-send_delay = 5
-cycle_delay = 1
+send_delay = 4
+cycle_delay = 0.5
 words_to_avoid = ['Socket', 'Sockpuppet']
 user = 'tfaddy'
 subreddits = [
@@ -86,7 +86,7 @@ def main():
             except Exception as e:
                 print('[-] Exception occurred: {}'.format(e))
             else:
-                print('[+] Sockbot is checking /r/{}'.format(subreddit))
+                print('[+] Sockbot is checking /r/{}  '.format(subreddit))
                 try:
                     for comment in all_comments:
                         print('[+] Checking comment with ID: {}    '.format(comment.id), end='\r')
@@ -107,7 +107,7 @@ def main():
                                     print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
                                     database.insert_db_data(table, '(NULL, ?, CURRENT_TIMESTAMP)', (comment.id,))
                                     pk_id = database.dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
-                                    message_string = '<h1>Sock #{} was spotted at:</h1> {}<br><hr><br>' \
+                                    message_string = '<h1>Sock #{} was spotted at:</h1> {} <br><hr><br>' \
                                                      'Post contents: <p>{}</p><br>' \
                                                      'Post time: <b>{}</b><br>'.format(
                                                         pk_id,
@@ -116,11 +116,12 @@ def main():
                                                         strftime("%Y-%m-%d %H:%M:%S", gmtime())
                                                      )
                                     if not subreddit == 'EiteDagerous':
-                                        print('[!] Sending string: {}'.format(html2text(message_string)))
+                                        # print('[!] Sending string: {}'.format(html2text(message_string)))
+                                        print('[!] Sending string about sock #{}'.format(pk_id))
                                         r.send_message(user, 'Sock #{} spotted!'.format(pk_id), html2text(message_string))  # user, title, contents
                                     reply_string = '<h1>SOCK DETECTED</h1><br><br>' \
                                                    'tfaddy has been notified.<br><hr><br>' \
-                                                   '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat / /u/Always_SFW</a><br>' \
+                                                   '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a><br>' \
                                                    'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
@@ -130,7 +131,8 @@ def main():
                                     post_string = html2text(reply_string)
                                     if subreddit == 'EiteDagerous':
                                         post_string = 'ಠ_ಠ'
-                                    print('[!] Replying with: {}'.format(post_string))
+                                    # print('[!] Replying with: {}'.format(post_string))
+                                    print('[!] Replying to comment with ID: {}'.format(comment.id))
                                     comment.reply(post_string)
                                     pause('Holding after sending message', send_delay)
                                 else:
