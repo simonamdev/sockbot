@@ -13,7 +13,7 @@ no employee of Frontier Developments was involved in the making of it.
 
 testing_mode = False
 
-version = '0.8.2'
+version = '0.8.4'
 user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 table = 'socks'
 send_delay = 4
@@ -127,8 +127,9 @@ def main():
                                                    'Socks detected so far: <b>{}</b><br>' \
                                                    'Online since: <b>{}</b> (GMT)<br>' \
                                                    'Sockbot current version: <b>{}</b></i><br>' \
-                                                   'Need something to keep your feet warm? How about some <a href="https://www.frontierstore.net/merchandise/elite-dangerous-logo-socks-black.html">ELITE DANGEROUS SOCKS??</a>'.format(pk_id, startup_time, version)
+                                                   'Need something to keep your feet warm? How about some <a href="https://goo.gl/dRxLIN">ELITE DANGEROUS SOCKS??</a>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
+                                    post_string += 'Need something to keep your feet warm? How about some [ELITE DANGEROUS SOCKS??](https://www.frontierstore.net/merchandise/elite-dangerous-logo-socks-black.html)'
                                     if subreddit == 'EiteDagerous':
                                         post_string = 'ಠ_ಠ'
                                     # print('[!] Replying with: {}'.format(post_string))
