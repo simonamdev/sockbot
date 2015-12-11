@@ -126,8 +126,7 @@ def main():
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
                                                    'Online since: <b>{}</b> (GMT)<br>' \
-                                                   'Sockbot current version: <b>{}</b></i><br>' \
-                                                   'Need something to keep your feet warm? How about some <a href="https://goo.gl/dRxLIN">ELITE DANGEROUS SOCKS??</a>'.format(pk_id, startup_time, version)
+                                                   'Sockbot current version: <b>{}</b></i><br>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
                                     post_string += 'Need something to keep your feet warm? How about some [ELITE DANGEROUS SOCKS??](https://www.frontierstore.net/merchandise/elite-dangerous-logo-socks-black.html)'
                                     if subreddit == 'EiteDagerous':
