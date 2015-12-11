@@ -94,7 +94,7 @@ def main():
                             avoid_word_present = False  # check for words you are supposed to avoid, like 'Socket'
                             for bad_word in words_to_avoid:
                                 if bad_word.lower() in comment.body.lower():
-                                    print('[-] Comment with ID: {} at link: {} is invalid'.format(comment.id, comment.permalink))
+                                    print('[-] Comment with ID: {} is invalid'.format(comment.id))
                                     avoid_word_present = True
                                     break
                             if avoid_word_present:
@@ -107,25 +107,26 @@ def main():
                                     print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
                                     database.insert_db_data(table, '(NULL, ?, CURRENT_TIMESTAMP)', (comment.id,))
                                     pk_id = database.dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
-                                    message_string = '<h1>Sock #{} was spotted at: {}.</h1><br><hr><br>' \
-                                                     'Post contents:<br>' \
-                                                     '<p>{}</p>'.format(
+                                    message_string = '<h1>Sock #{} was spotted at: {}</h1><br><hr><br>' \
+                                                     'Post contents: <p>{}</p><br>' \
+                                                     'Post time: <b>{}</b><br>'.format(
                                                         pk_id,
                                                         comment.permalink,
-                                                        comment.body
+                                                        comment.body,
+                                                        strftime("%Y-%m-%d %H:%M:%S", gmtime())
                                                      )
                                     if not subreddit == 'EiteDagerous':
                                         print('[!] Sending string: {}'.format(html2text(message_string)))
                                         r.send_message(user, 'Sock #{} spotted!'.format(pk_id), html2text(message_string))  # user, title, contents
                                     reply_string = '<h1>SOCK DETECTED</h1><br><br>' \
                                                    'tfaddy has been notified.<br><hr><br>' \
-                                                   '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a><br>' \
+                                                   '<small><i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat</a><br>' \
                                                    'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist.<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
                                                    'Online since: <b>{}</b> (GMT)<br>' \
                                                    'SOCKBOT IS HYPED FOR HORIZONS!! ARE YOU??<br>' \
-                                                   'Sockbot current version: <b>{}</b></i>'.format(pk_id, startup_time, version)
+                                                   'Sockbot current version: <b>{}</b></i></small>'.format(pk_id, startup_time, version)
                                     post_string = html2text(reply_string)
                                     if subreddit == 'EiteDagerous':
                                         post_string = 'ಠ_ಠ'
