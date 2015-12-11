@@ -11,7 +11,9 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-version = '0.7.4'
+testing_mode = True
+
+version = '0.8'
 user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 table = 'socks'
 send_delay = 5
@@ -50,6 +52,12 @@ subreddits = [
     'EiteDagerous'
 ]
 
+if testing_mode:
+    print('[!] SOCKBOT IS IN TESTING MODE')
+    user = 'Always_SFW'
+    table = 'test'
+    subreddits = ['sockbottery']
+
 
 def get_comment_id_list(db, table_name):
     comment_id_list = []
@@ -85,7 +93,7 @@ def main():
                         if 'sock' in comment.body.lower() and not comment.author.name == 'sockbot259':
                             avoid_word_present = False  # check for words you are supposed to avoid, like 'Socket'
                             for bad_word in words_to_avoid:
-                                if bad_word in comment.body:
+                                if bad_word.lower() in comment.body.lower():
                                     print('[-] Comment with ID: {} at link: {} is invalid'.format(comment.id, comment.permalink))
                                     avoid_word_present = True
                                     break
@@ -125,7 +133,7 @@ def main():
                                     comment.reply(post_string)
                                     pause('Holding after sending message', send_delay)
                                 else:
-                                    print('[-] Comment is already in database')
+                                    print('[-] Comment with ID: {} is already in database'.format(comment.id))
                 except Exception as e:
                     print('[-] Exception occurred whilst attempting to parse the comments')
                     print('[-] Exception:', e)
