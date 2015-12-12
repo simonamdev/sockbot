@@ -13,7 +13,7 @@ no employee of Frontier Developments was involved in the making of it.
 
 testing_mode = False
 
-version = '0.8.4'
+version = '0.9'
 user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 table = 'socks'
 send_delay = 4
@@ -68,7 +68,7 @@ def get_comment_id_list(db, table_name):
 
 
 def main():
-    thread_commenters = dict()
+    commenter_timeout = dict()
     cycle = 1
     startup_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     print('[!] Sockbot version {} starting at: {}'.format(version, startup_time))
@@ -116,7 +116,6 @@ def main():
                                                         strftime("%Y-%m-%d %H:%M:%S", gmtime())
                                                      )
                                     if not subreddit == 'EiteDagerous':
-                                        # print('[!] Sending string: {}'.format(html2text(message_string)))
                                         print('[!] Sending string about sock #{}'.format(pk_id))
                                         r.send_message(user, 'Sock #{} spotted!'.format(pk_id), html2text(message_string))  # user, title, contents
                                     reply_string = '<h1>SOCK DETECTED</h1><br><br>' \
@@ -131,15 +130,13 @@ def main():
                                     post_string += 'Need something to keep your feet warm? How about some [ELITE DANGEROUS SOCKS??](https://www.frontierstore.net/merchandise/elite-dangerous-logo-socks-black.html)'
                                     if subreddit == 'EiteDagerous':
                                         post_string = 'ಠ_ಠ'
-                                    # print('[!] Replying with: {}'.format(post_string))
                                     print('[!] Replying to comment with ID: {}'.format(comment.id))
                                     comment.reply(post_string)
                                     pause('Holding after sending message', send_delay)
                                 else:
                                     print('[-] Comment with ID: {} is already in database'.format(comment.id))
                 except Exception as e:
-                    print('[-] Exception occurred whilst attempting to parse the comments')
-                    print('[-] Exception:', e)
+                    print('[-] Comment parse exception:'.format(e))
                 sleep(cycle_delay)
         print('[+] Current amount of socks in DB: {}, Instances found this cycle: {}'.format(len(get_comment_id_list(database, table)), socks_spotted))
 
