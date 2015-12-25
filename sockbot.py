@@ -4,6 +4,9 @@ from pysqlite import Pysqlite
 from html2text import html2text  # thank you Aaron Schwartz
 from purrtools import pause
 from time import sleep, strftime, gmtime
+from argparse import ArgumentParser
+
+__author__ = 'Simon Agius Muscat, www.github.com/Winter259'
 
 """
 Sockbot was created using assets and imagery from Elite Dangerous, with the permission of Frontier Developments plc,
@@ -11,7 +14,13 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-testing_mode = True
+# receive parameters from the command line here
+parser = ArgumentParser(description='Runs sockbot to check for socks in /r/elitedangerous')
+parser.add_argument('-d', '--debug', action='store_true', help='Runs debug mode (uncoded)', required=False)
+parser.add_argument('-t', '--testing', action='store_false', help='Runs testing mode (default: true)', default=True, required=False)
+args = parser.parse_args()
+testing_mode = args.testing
+debug_mode = args.debug
 
 version = '0.9'
 user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
