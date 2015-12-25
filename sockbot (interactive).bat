@@ -1,1 +1,1 @@
-python %0\..\sockbot.py -d
+python %0\..\sockbot.py -i
