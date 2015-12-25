@@ -82,11 +82,26 @@ def main():
     print('[!] Sockbot version {} starting at: {}'.format(version, startup_time))
     print('[!] Sockbot arguments: Testing Mode: {} Interactive Mode: {}'.format(testing_mode, interactive_mode))
     database = Pysqlite('socksdb', 'socks.db')  # initialise the database
+    print('[!] Sockbot is initialising connection to Reddit...')
     r = praw.Reddit(user_agent=user_agent)
     o = OAuth2Util.OAuth2Util(r, server_mode=True)
     o.refresh(force=True)  # avoids having to refresh the token manually
+    print('[!] Sockbot is now connected to Reddit')
     while True and interactive_mode:
-        input('I will tell you anything you tell me:')
+        print('[!] Options list:')
+        print('\t[1] Show messages')
+        choice = int(input('[?] What needs doing?: '))
+        if choice == 1:
+            print('[!] Getting messages...')
+            messages = r.get_messages()  # double false keeps them unread for now
+            for pm in messages:
+                if 'sockbot' not in pm.author:
+                    print('\nFrom: {}'.format(pm.author))
+                    print(pm.body.strip())
+                else:
+                    print('wut')
+        else:
+            print('[-] Unrecognized input :(')
     while True:
         print('[+] Sockbot cycle: {}'.format(cycle))
         cycle += 1
@@ -133,7 +148,7 @@ def main():
                                                    '<h1>SOCK DETECTED</h1><br><br>' \
                                                    'tfaddy has been notified.<br>' \
                                                    '<hr><br>' \
-                                                   'I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a><br>' \
+                                                   'I am <a href="https://imgur.com/gx8Ul3F">an automated bot</a>, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a><br>' \
                                                    'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
