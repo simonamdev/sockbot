@@ -16,11 +16,11 @@ no employee of Frontier Developments was involved in the making of it.
 
 # receive parameters from the command line here
 parser = ArgumentParser(description='Runs sockbot to check for socks in /r/elitedangerous')
-parser.add_argument('-d', '--debug', action='store_true', help='Runs debug mode (uncoded)', required=False)
+parser.add_argument('-i', '--interactive', action='store_true', help='Runs in interactive mode', default=False, required=False)
 parser.add_argument('-t', '--testing', action='store_false', help='Runs testing mode (default: true)', default=True, required=False)
 args = parser.parse_args()
 testing_mode = args.testing
-debug_mode = args.debug
+interactive_mode = args.interactive
 
 version = '0.9'
 user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
@@ -63,10 +63,9 @@ subreddits = [
 ]
 
 if testing_mode:
-    print('[!] SOCKBOT IS IN TESTING MODE')
-    user = 'Always_SFW'
-    table = 'test'
-    subreddits = ['sockbottery']
+        user = 'Always_SFW'
+        table = 'test'
+        subreddits = ['sockbottery']
 
 
 def get_comment_id_list(db, table_name):
@@ -81,10 +80,13 @@ def main():
     cycle = 1
     startup_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     print('[!] Sockbot version {} starting at: {}'.format(version, startup_time))
+    print('[!] Sockbot arguments: Testing Mode: {} Interactive Mode: {}'.format(testing_mode, interactive_mode))
     database = Pysqlite('socksdb', 'socks.db')  # initialise the database
     r = praw.Reddit(user_agent=user_agent)
     o = OAuth2Util.OAuth2Util(r, server_mode=True)
     o.refresh(force=True)  # avoids having to refresh the token manually
+    while True and interactive_mode:
+        input('I will tell you anything you tell me:')
     while True:
         print('[+] Sockbot cycle: {}'.format(cycle))
         cycle += 1
@@ -98,7 +100,6 @@ def main():
                 print('[+] Sockbot is checking /r/{}  '.format(subreddit))
                 try:
                     for comment in all_comments:
-                        # print('Comment ID: {} Submission: {}'.format(comment.id, comment.submission))
                         print('[+] Checking comment with ID: {}    '.format(comment.id), end='\r')
                         if 'sock' in comment.body.lower() and not comment.author.name == 'sockbot259':
                             avoid_word_present = False  # check for words you are supposed to avoid, like 'Socket'
@@ -130,12 +131,13 @@ def main():
                                         r.send_message(user, 'Sock #{} spotted!'.format(pk_id), html2text(message_string))  # user, title, contents
                                     reply_string = '[ಠ‿ಠ]<br><br>' \
                                                    '<h1>SOCK DETECTED</h1><br><br>' \
-                                                   'tfaddy has been notified.<br><hr><br>' \
-                                                   '<i>I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a><br>' \
+                                                   'tfaddy has been notified.<br>' \
+                                                   '<hr><br>' \
+                                                   'I am a bot, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a><br>' \
                                                    'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
-                                                   'Online since: <b>{} (GMT)</b></i>'.format(pk_id, startup_time)
+                                                   'Online since: <b>{} (GMT)</b>'.format(pk_id, startup_time)
                                     post_string = html2text(reply_string)
                                     post_string += 'Need something to keep your feet warm? How about some [ELITE DANGEROUS SOCKS??](https://www.frontierstore.net/merchandise/elite-dangerous-logo-socks-black.html)'
                                     if subreddit == 'EiteDagerous':
