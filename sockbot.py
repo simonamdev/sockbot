@@ -49,7 +49,8 @@ subreddits = [
     'eliteantal',
     'elitesirius',
     'elitelivery',
-    'EiteDagerous'
+    'EiteDagerous',
+    'EliteLewis'
 ]
 
 if testing_mode:
@@ -115,7 +116,7 @@ def main():
                                                         comment.body,
                                                         strftime("%Y-%m-%d %H:%M:%S", gmtime())
                                                      )
-                                    if not subreddit == 'EiteDagerous':
+                                    if not subreddit == 'EiteDagerous' and not comment.body.lower() == 'sock':
                                         print('[!] Sending string about sock #{}'.format(pk_id))
                                         r.send_message(user, 'Sock #{} spotted!'.format(pk_id), html2text(message_string))  # user, title, contents
                                     reply_string = '[ಠ‿ಠ]<br><br>' \
@@ -125,7 +126,7 @@ def main():
                                                    'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist<br>' \
                                                    'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
-                                                   'Online since: <b>{}</b> (GMT)<br>'.format(pk_id, startup_time)
+                                                   'Online since: <b>{} (GMT)</b></i>'.format(pk_id, startup_time)
                                     post_string = html2text(reply_string)
                                     post_string += 'Need something to keep your feet warm? How about some [ELITE DANGEROUS SOCKS??](https://www.frontierstore.net/merchandise/elite-dangerous-logo-socks-black.html)'
                                     if subreddit == 'EiteDagerous':
@@ -135,12 +136,6 @@ def main():
                                         post_string = 'You could try to be a bit more imaginative with your post...'
                                     print('[!] Replying to comment with ID: {}'.format(comment.id))
                                     comment.reply(post_string)
-                                    """
-                                    if commenter_timeout[comment.author.name] is None:
-                                        commenter_timeout[comment.author.name] = []
-                                    else:
-                                        commenter_timeout[comment.author.name] = commenter_timeout[comment.author.name].append(comment.submission)
-                                    """
                                     pause('Holding after sending message', send_delay)
                                 else:
                                     print('[-] Comment with ID: {} is already in database'.format(comment.id))
