@@ -17,8 +17,8 @@ no employee of Frontier Developments was involved in the making of it.
 # receive parameters from the command line here
 parser = ArgumentParser(description='Runs sockbot to check for socks in /r/elitedangerous')
 parser.add_argument('-i', '--interactive', action='store_true', help='Runs in interactive mode', default=False, required=False)
-parser.add_argument('-t', '--testing', action='store_false', help='Runs testing mode (default: true)', default=True, required=False)
-args = parser.parse_args()
+parser.add_argument('-t', '--testing', action='store_true', help='Runs testing mode (default: live mode)', default=False, required=False)
+args = parser.parse_args([])
 testing_mode = args.testing
 interactive_mode = args.interactive
 
@@ -90,16 +90,59 @@ def main():
     while True and interactive_mode:
         print('[!] Options list:')
         print('\t[1] Show messages')
+        print('\t[2] Send message')
+        print('\t[3] Reply to a Redditor')
+        print('\t[4] Exit')
         choice = int(input('[?] What needs doing?: '))
         if choice == 1:
-            print('[!] Getting messages...')
+            print('[+] Getting messages...')
             messages = r.get_messages()  # double false keeps them unread for now
             for pm in messages:
-                if 'sockbot' not in pm.author:
+                if 'sockbot' not in str(pm.author):
                     print('\nFrom: {}'.format(pm.author))
                     print(pm.body.strip())
-                else:
-                    print('wut')
+        elif choice == 2:
+            recipient = input('[?] Who do you want to message: ')
+            if len(recipient) > 0:
+                title = input('[?] What will the title be: ')
+                message = input('[?] What shall I send to {}: '.format(recipient))
+                try:
+                    r.send_message(recipient, title, message)
+                    print('[+] Successfully messaged {}'.format(recipient))
+                except Exception as e:
+                    print('[-] Exception occurred: {}'.format(e))
+            else:
+                print('[-] No recipient specified')
+        elif choice == 3:
+            redditor_name = input('[?] Which Redditor will I recover comments of: ')
+            redditor = r.get_redditor(redditor_name)
+            comment_id_array = []
+            try:
+                comments = redditor.get_comments(limit=5)
+                for comment in comments:
+                    comment_id_array.append(comment)
+                    print('[+] Comment Index: {} Comment ID: {} Comment permalink: {}'.format(
+                        comment_id_array.index(comment),
+                        comment.id,
+                        comment.permalink
+                    ))
+            except Exception as e:
+                print('[-] Unable to retrieve submission: {}'.format(e))
+            finally:
+                comment_id = int(input('[?] Index to reply to: '))
+                comment_required = comment_id_array[comment_id]
+                comment_reply_text = input('[?] Comment reply body: ')
+                try:
+                    print('[!] Replying to comment ID: {} with: {}'.format(
+                        comment_id_array[comment_id],
+                        comment_reply_text
+                    ))
+                    comment_required.reply(comment_reply_text)
+                except Exception as e:
+                    print('[-] Could not reply to the comment: {}'.format(e))
+        elif choice == 4:
+            print('[!] Bye! :)')
+            exit()
         else:
             print('[-] Unrecognized input :(')
     while True:
@@ -149,10 +192,9 @@ def main():
                                                    'tfaddy has been notified.<br>' \
                                                    '<hr><br>' \
                                                    'I am <a href="https://imgur.com/gx8Ul3F">an automated bot</a>, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a><br>' \
-                                                   'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist<br>' \
-                                                   'You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a><br>' \
+                                                   'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist. You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a>.<br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
-                                                   'Online since: <b>{} (GMT)</b>'.format(pk_id, startup_time)
+                                                   'Online since: <b>{} (GMT)</b><br>'.format(pk_id, startup_time)
                                     post_string = html2text(reply_string)
                                     post_string += 'Need something to keep your feet warm? How about some [ELITE DANGEROUS SOCKS??](https://www.frontierstore.net/merchandise/elite-dangerous-logo-socks-black.html)'
                                     if subreddit == 'EiteDagerous':
@@ -160,6 +202,8 @@ def main():
                                     # if the comment is unimaginative...
                                     if comment.body.lower() == 'sock':
                                         post_string = 'You could try to be a bit more imaginative with your post...'
+                                    if comment.author.name == 'tfaddy':
+                                        post_string = 'Hey man, I\' your biggest fan!'
                                     print('[!] Replying to comment with ID: {}'.format(comment.id))
                                     comment.reply(post_string)
                                     pause('Holding after sending message', send_delay)
