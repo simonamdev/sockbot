@@ -58,8 +58,7 @@ subreddits = [
     'eliteantal',
     'elitesirius',
     'elitelivery',
-    'EiteDagerous',
-    'EliteLewis'
+    'EiteDagerous'
 ]
 
 if testing_mode:
