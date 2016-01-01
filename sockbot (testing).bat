@@ -1,1 +1,0 @@
-python %0\..\sockbot.py -t
