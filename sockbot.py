@@ -190,8 +190,8 @@ def main():
                                                    '<h1>SOCK DETECTED</h1><br><br>' \
                                                    'tfaddy has been notified.<br>' \
                                                    '<hr><br>' \
-                                                   'I am <a href="https://imgur.com/gx8Ul3F">an automated bot</a>, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a><br>' \
-                                                   'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist. You can find my source code <a href="https://github.com/Winter259/sockbot">on github</a>.<br>' \
+                                                   'I am <a href=https://imgur.com/RKuioGf">an automated bot on a Raspberry Pi</a>, created and maintained by <a href ="https://www.reddit.com/user/Always_SFW">CMDR Purrcat, /u/Always_SFW</a>.<br>' \
+                                                   'Click <a href="https://www.reddit.com/r/EliteDangerous/comments/3sz817/learn_how_to_get_ripped_in_4_weeks/cx261wx">here</a> to find out why I exist. You can find my source code <a href="https://github.com/Winter259/sockbot">on Github</a>.<br>' \
                                                    'Socks detected so far: <b>{}</b><br>' \
                                                    'Online since: <b>{} (GMT)</b><br>'.format(pk_id, startup_time)
                                     post_string = html2text(reply_string)
