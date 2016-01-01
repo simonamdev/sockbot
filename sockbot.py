@@ -4,7 +4,6 @@ from pysqlite import Pysqlite
 from html2text import html2text  # thank you Aaron Schwartz
 from purrtools import pause
 from time import sleep, strftime, gmtime
-from argparse import ArgumentParser
 
 __author__ = 'Simon Agius Muscat, www.github.com/Winter259'
 
@@ -14,15 +13,7 @@ for non-commercial purposes. It is not endorsed by nor reflects the views or opi
 no employee of Frontier Developments was involved in the making of it.
 """
 
-# receive parameters from the command line here
-parser = ArgumentParser(description='Runs sockbot to check for socks in /r/elitedangerous')
-parser.add_argument('-i', '--interactive', action='store_true', help='Runs in interactive mode', default=False, required=False)
-parser.add_argument('-t', '--testing', action='store_true', help='Runs testing mode (default: live mode)', default=False, required=False)
-args = parser.parse_args([])
-testing_mode = args.testing
-interactive_mode = args.interactive
-
-version = '0.9'
+version = '1.0'
 user_agent = 'raspberrypi:sockb0t259:v{} (by /u/Always_SFW)'.format(version)
 table = 'socks'
 send_delay = 4
@@ -61,10 +52,14 @@ subreddits = [
     'EiteDagerous'
 ]
 
+interactive_mode = input('[?] Run Sockbot in interactive mode? (y/n): ').lower()
+interactive_mode = interactive_mode.startswith('y')
+testing_mode = input('[?] Run Sockbot in testing mode? (y/n): ').lower()
+testing_mode = testing_mode.startswith('y')
 if testing_mode:
-        user = 'Always_SFW'
-        table = 'test'
-        subreddits = ['sockbottery']
+    user = 'Always_SFW'
+    table = 'test'
+    subreddits = ['sockbottery']
 
 
 def get_comment_id_list(db, table_name):
@@ -115,9 +110,12 @@ def main():
         elif choice == 3:
             redditor_name = input('[?] Which Redditor will I recover comments of: ')
             redditor = r.get_redditor(redditor_name)
+            comment_amount = int(input('[?] How many comments shall I retrieve?: '))
+            if comment_amount is None:
+                comment_amount = 5
             comment_id_array = []
             try:
-                comments = redditor.get_comments(limit=5)
+                comments = redditor.get_comments(limit=comment_amount)
                 for comment in comments:
                     comment_id_array.append(comment)
                     print('[+] Comment Index: {} Comment ID: {} Comment permalink: {}'.format(
