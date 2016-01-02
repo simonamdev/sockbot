@@ -20,6 +20,11 @@ send_delay = 4
 cycle_delay = 0.5
 words_to_avoid = ['Socket', 'Sockpuppet']
 user = 'tfaddy'
+bot_moderators = [  # people who can pause the bot
+    'CMDR_Shazbot',
+    'SpyTec13',
+    'Always_SFW'
+]
 subreddits = [
     'elitedangerous',
     'elitetraders',
@@ -90,11 +95,12 @@ def main():
         choice = int(input('[?] What needs doing?: '))
         if choice == 1:
             print('[+] Getting messages...')
-            messages = r.get_messages()  # double false keeps them unread for now
+            messages = r.get_unread()  # double false keeps them unread for now
             for pm in messages:
                 if 'sockbot' not in str(pm.author):
                     print('\nFrom: {}'.format(pm.author))
                     print(pm.body.strip())
+                    pm.mark_as_read()
         elif choice == 2:
             recipient = input('[?] Who do you want to message: ')
             if len(recipient) > 0:
@@ -142,10 +148,13 @@ def main():
             exit()
         else:
             print('[-] Unrecognized input :(')
+    # non interactive mode
     while True:
         print('[+] Sockbot cycle: {}'.format(cycle))
         cycle += 1
         socks_spotted = 0  # amount of socks currently present in the comments. Also includes those already in DB
+        # check for a pause
+
         for subreddit in subreddits:
             try:
                 all_comments = r.get_comments(subreddit)
