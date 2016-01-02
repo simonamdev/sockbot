@@ -209,7 +209,7 @@ def main():
                                     if comment.body.lower() == 'sock':
                                         post_string = 'You could try to be a bit more imaginative with your post...'
                                     if comment.author.name == 'tfaddy':
-                                        post_string = 'Hey man, I\' your biggest fan!'
+                                        post_string = 'Hey man, I\'m your biggest fan!'
                                     print('[!] Replying to comment with ID: {}'.format(comment.id))
                                     comment.reply(post_string)
                                     pause('Holding after sending message', send_delay)
