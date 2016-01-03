@@ -153,8 +153,6 @@ def main():
         print('[+] Sockbot cycle: {}'.format(cycle))
         cycle += 1
         socks_spotted = 0  # amount of socks currently present in the comments. Also includes those already in DB
-        # check for a pause
-
         for subreddit in subreddits:
             try:
                 all_comments = r.get_comments(subreddit)
@@ -182,6 +180,9 @@ def main():
                                     print('[!] Sockbot found a sock! Placing ID: {} in the database'.format(comment.id))
                                     database.insert_db_data(table, '(NULL, ?, CURRENT_TIMESTAMP)', (comment.id,))
                                     pk_id = database.dbcur.execute('SELECT max(id) FROM {}'.format(table)).fetchone()[0]
+                                    if int(pk_id) == 1000:
+                                        r.send_message('Always_SFW', 'SOCKBOT LIMIT REACHED', 'SOCKBOT LIMIT REACHED')
+                                        quit()
                                     message_string = '<h1>Sock #{} was spotted at:</h1> {} <br><hr><br>' \
                                                      'Post contents: <p>{}</p><br>' \
                                                      'Post time: <b>{}</b><br>'.format(
@@ -190,7 +191,7 @@ def main():
                                                         comment.body,
                                                         strftime("%Y-%m-%d %H:%M:%S", gmtime())
                                                      )
-                                    if not subreddit == 'EiteDagerous' and not comment.body.lower() == 'sock':
+                                    if not subreddit == 'EiteDagerous' and not (comment.body.lower() == 'sock' or len(comment.body) < 6):
                                         print('[!] Sending string about sock #{}'.format(pk_id))
                                         r.send_message(user, 'Sock #{} spotted!'.format(pk_id), html2text(message_string))  # user, title, contents
                                     reply_string = '[ಠ‿ಠ]<br><br>' \
@@ -206,7 +207,7 @@ def main():
                                     if subreddit == 'EiteDagerous':
                                         post_string = 'ಠ_ಠ'
                                     # if the comment is unimaginative...
-                                    if comment.body.lower() == 'sock':
+                                    if comment.body.lower() == 'sock' or len(comment.body) < 6:
                                         post_string = 'You could try to be a bit more imaginative with your post...'
                                     if comment.author.name == 'tfaddy':
                                         post_string = 'Hey man, I\'m your biggest fan!'
